@@ -16,7 +16,7 @@ class Module(sdk.Module):
         encoding = chardet.detect(data)["encoding"]
         result = "No data received"
         if encoding is not None:
-            result = data.decode(encoding)
+            result = data.decode(encoding).strip()
         return result
 
     async def run(self, event: sdk.Event, command: str):
@@ -40,4 +40,8 @@ class Module(sdk.Module):
         await self.run(event, "neofetch --stdout")
 
     async def terminal_cmd(self, event: sdk.Event, command: sdk.Command):
+        if command.arg == "":
+            await sdk.send(event.message, "<b>You need to specify command.</b>")
+            return
+
         await self.run(event, command.arg)
